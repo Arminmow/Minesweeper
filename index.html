@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minesweeper</title>
+    <link rel="icon" type="image/x-icon" href="assets/bomb-noBg.png">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <main class="main" id="main">
+        <div id="grid"></div>
+
+        <div class="gameInp" id="gameInp">
+            <div class="input-group">
+                <input type="number" id="size" min="3" max="25" required class="input">
+                <label for="size" class="input-label">Size</label>
+            </div>
+            <div class="input-group">
+                <input type="number" id="bombAmount"  required class="input">
+                <label for="bombAmount" class="input-label">Bomb amount</label>
+            </div>
+            <button id="initBtn">Create grid</button>
+        </div>
+
+    </main>
+
+<script src="main.js" type="module"></script>
+</body>
+</html>
