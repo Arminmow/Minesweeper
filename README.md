@@ -1,6 +1,6 @@
 # Mine Sweeper
 
-##Run it on localhost:
+## Run it on localhost:
 
 1> Have Node.js installed in your system.
 
