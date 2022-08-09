@@ -6,7 +6,7 @@ body {
 }
 
 .main {
-    background-color: aqua;
+    background-color: #EF7C8E;
     max-width: 100vw;
     height: 100vh;
     display: flex;
@@ -60,8 +60,8 @@ body {
     align-items: center;
     width: 600px;
     height: 300px;
-    background-color: #cecab7;
-    border: 2px solid #9c998d;
+    background-color: #FAE8E0;
+    border: 5px solid #D8A7B1;
     border-radius: 30px;
 }
 
@@ -75,9 +75,9 @@ body {
     border: none;
     border-radius: 4px;
     font: inherit;
-    color: #fff;
+    color: black;
     background-color: transparent;
-    outline: 2px solid #fff;
+    outline: 2px solid #D8A7B1;
     width: 100px;
 }
 
@@ -92,7 +92,7 @@ body {
 .input:valid+.input-label{
     transform: translate(10px, -14px) scale(.8);
     padding-inline: 5px;
-    background-color: #cecab7;
+    background-color: #FAE8E0;
 }
 .input:is(:focus, :valid){
     outline-color: #9c998d;
