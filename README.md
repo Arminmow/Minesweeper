@@ -4,7 +4,7 @@
 
 1> Have Node.js installed in your system.
 
-2> In CMD, run the command npm install ``` http-server -g ```
+2> In CMD, run the command ``` npm install  http-server -g ```
 
 3> Navigate to the specific path of the file folder in CMD and run the command ``` http-server ```
 
