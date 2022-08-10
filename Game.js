@@ -7,8 +7,10 @@ class Game {
         this.bombAmount = parseInt(bombAmount);
         this.remainingFlags = bombAmount;
         this.gridId = parentId;
+        this.isFirstClick = true
         this.createGameArray();
         this.createGrid();
+        this.createScoreContainer();
     }
 
     createGameArray (){
@@ -41,7 +43,7 @@ class Game {
         this.flagHandler = (e)=> this.handleFlag(e);
         grid.addEventListener('click',this.clickListener);
         grid.addEventListener('contextmenu', this.flagHandler);
-    }
+   }
 
     createGrid (){
         this.prepareGrid();
@@ -62,6 +64,34 @@ class Game {
         this.cellsArray = cellsArray;
     }
 
+    createScoreContainer (){
+        const scoreboard = document.createElement('div');
+        const scoreboardWidth = parseInt(document.getElementById(this.gridId).style.width) / 3;
+        const scoreboardHeight = parseInt(document.getElementById(this.gridId).style.height);
+        const flagsContainer = document.createElement('h3');
+        const timerContainer = document.createElement('h3')
+
+
+        scoreboard.id = 'scoreboard';
+        scoreboard.style.width = `${scoreboardWidth}px`;
+        scoreboard.style.height = `${scoreboardHeight}px`;
+        scoreboard.style.marginLeft = `20px`;
+        scoreboard.style.padding = `10px`;
+
+        flagsContainer.id = 'flagsContainer';
+        flagsContainer.innerText = `Flags: ${this.remainingFlags}`;
+        flagsContainer.className = `scoreEl`
+
+        timerContainer.id = `timerContainer`
+        timerContainer.innerText = `Time:`
+        timerContainer.className = 'scoreEl'
+
+        scoreboard.append(flagsContainer);
+        scoreboard.append(timerContainer)
+
+        document.getElementById('main').append(scoreboard);
+    }
+
     findCell (targetId){
         for (let i=0; i < this.cellsArray.length; i++){
             const cellInstance = this.cellsArray[i];
@@ -73,6 +103,12 @@ class Game {
     }
 
     handleClick (el){
+        if (this.isFirstClick) {
+            const startDate = Date.now()
+            this.timerInterval = setInterval(()=> this.updateTimer(startDate), 1000);
+        }
+
+        this.isFirstClick = false
 
         if(el === null) return;
 
@@ -120,7 +156,11 @@ class Game {
                 }
             }
         }
+        this.updateFlagsTitle();
+    }
 
+    updateFlagsTitle (){
+        document.getElementById('flagsContainer').innerText = `Flags: ${this.remainingFlags}`;
     }
 
     controlCells(cell){
@@ -173,7 +213,15 @@ class Game {
         })
         document.getElementById(this.gridId).removeEventListener('click', this.clickListener);
         document.getElementById(this.gridId).removeEventListener('contextmenu', this.flagHandler);
+        clearInterval(this.timerInterval);
         alert('GameOver');
+    }
+
+    updateTimer (startDate) {
+        const delta = Date.now() - startDate;
+        const deltaSec = Math.floor(delta / 1000);
+
+        document.getElementById('timerContainer').innerText = `Time: ${deltaSec}`;
     }
 
     checkForWin (){
@@ -190,6 +238,7 @@ class Game {
         this.cellsArray.forEach((cell)=>{
             if (cell.isBomb) cell.addFlag()
         })
+        clearInterval(this.timerInterval);
         alert('YOU WON');
     }
 
