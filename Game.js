@@ -9,6 +9,7 @@ class Game {
         this.gridId = parentId;
         this.createGameArray();
         this.createGrid();
+        this.createScoreContainer();
     }
 
     createGameArray (){
@@ -60,6 +61,34 @@ class Game {
             })
         })
         this.cellsArray = cellsArray;
+    }
+
+    createScoreContainer (){
+        const scoreboard = document.createElement('div');
+        const scoreboardWidth = parseInt(document.getElementById(this.gridId).style.width) / 3;
+        const scoreboardHeight = parseInt(document.getElementById(this.gridId).style.height);
+        const flagsContainer = document.createElement('h3');
+        const timerContainer = document.createElement('h3')
+
+
+        scoreboard.id = 'scoreboard';
+        scoreboard.style.width = `${scoreboardWidth}px`;
+        scoreboard.style.height = `${scoreboardHeight}px`;
+        scoreboard.style.marginLeft = `20px`;
+        scoreboard.style.padding = `10px`;
+
+        flagsContainer.id = 'flagsContainer';
+        flagsContainer.innerText = `Flags: ${this.remainingFlags}`;
+        flagsContainer.className = `scoreEl`
+
+        timerContainer.id = `timerContainer`
+        timerContainer.innerText = `Time:`
+        timerContainer.className = 'scoreEl'
+
+        scoreboard.append(flagsContainer);
+        scoreboard.append(timerContainer)
+
+        document.getElementById('main').append(scoreboard);
     }
 
     findCell (targetId){
@@ -120,7 +149,11 @@ class Game {
                 }
             }
         }
+        this.updateFlagsTitle();
+    }
 
+    updateFlagsTitle (){
+        document.getElementById('flagsContainer').innerText = `Flags: ${this.remainingFlags}`;
     }
 
     controlCells(cell){
