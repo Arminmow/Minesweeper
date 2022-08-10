@@ -220,6 +220,9 @@ class Game {
     }
 
     gameWin (){
+        this.cellsArray.forEach((cell)=>{
+            if (cell.isBomb) cell.addFlag()
+        })
         alert('YOU WON');
     }
 
