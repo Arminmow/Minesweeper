@@ -111,3 +111,13 @@ body {
 #initBtn:hover {
     letter-spacing: 1px;
 }
+
+#scoreboard {
+    background-color: #FFFFFF;
+    border: 10px solid #292F36;
+}
+
+.scoreEl {
+    font-size: 30px;
+    margin: 50px 0;
+}
