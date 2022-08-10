@@ -7,6 +7,7 @@ class Game {
         this.bombAmount = parseInt(bombAmount);
         this.remainingFlags = bombAmount;
         this.gridId = parentId;
+        this.isFirstClick = true
         this.createGameArray();
         this.createGrid();
         this.createScoreContainer();
@@ -42,7 +43,7 @@ class Game {
         this.flagHandler = (e)=> this.handleFlag(e);
         grid.addEventListener('click',this.clickListener);
         grid.addEventListener('contextmenu', this.flagHandler);
-    }
+   }
 
     createGrid (){
         this.prepareGrid();
@@ -102,6 +103,12 @@ class Game {
     }
 
     handleClick (el){
+        if (this.isFirstClick) {
+            const startDate = Date.now()
+            this.timerInterval = setInterval(()=> this.updateTimer(startDate), 1000);
+        }
+
+        this.isFirstClick = false
 
         if(el === null) return;
 
@@ -206,7 +213,15 @@ class Game {
         })
         document.getElementById(this.gridId).removeEventListener('click', this.clickListener);
         document.getElementById(this.gridId).removeEventListener('contextmenu', this.flagHandler);
+        clearInterval(this.timerInterval);
         alert('GameOver');
+    }
+
+    updateTimer (startDate) {
+        const delta = Date.now() - startDate;
+        const deltaSec = Math.floor(delta / 1000);
+
+        document.getElementById('timerContainer').innerText = `Time: ${deltaSec}`;
     }
 
     checkForWin (){
@@ -223,6 +238,7 @@ class Game {
         this.cellsArray.forEach((cell)=>{
             if (cell.isBomb) cell.addFlag()
         })
+        clearInterval(this.timerInterval);
         alert('YOU WON');
     }
 
