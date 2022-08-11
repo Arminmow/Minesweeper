@@ -1,0 +1,22 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "description": "1> Have Node.js installed in your system.",
+  "main": "main.js",
+  "scripts": {
+    "start": "http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arminmow/Minesweeper.git"
+  },
+  "author": "Armin mow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arminmow/Minesweeper/issues"
+  },
+  "homepage": "https://github.com/Arminmow/Minesweeper#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
