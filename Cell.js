@@ -8,23 +8,26 @@ class Cell {
         this.parentId = parentId;
         this.isChecked = false;
         this.isFlagged = false;
-        this.addCellToParent();
+        this.addToParent();
     }
 
-    addCellToParent (){
+    addToParent (){
         const cellDiv = document.createElement('div');
 
         cellDiv.setAttribute('id',this.cellId);
+        cellDiv.className = 'cellDiv'
         cellDiv.style.width = `${this.width}px`;
         cellDiv.style.height = `${this.height}px`;
         cellDiv.classList.add('valid');
 
         document.getElementById(this.parentId).appendChild(cellDiv);
+        this.cellDiv = document.getElementById(this.cellId);
     }
 
-    activeCell (bombsCount){
-        document.getElementById(this.cellId).className = 'checked';
-        document.getElementById(this.cellId).innerText = bombsCount === 0 ? '' : bombsCount;
+    check (neighborBombsCount){
+        console.log(this.cellDiv)
+        this.cellDiv.classList.add('checked');
+        this.cellDiv.innerText = neighborBombsCount === 0 ? '' : neighborBombsCount;
         this.isChecked = true;
 
     }
@@ -36,23 +39,21 @@ class Cell {
         const bombImg = document.createElement('img');
 
         bombImg.src = 'assets/bomb-noBg.png';
-        bombImg.style.width = '100%';
-        bombImg.style.height = '100%';
+        bombImg.className = 'bombImg'
 
-        document.getElementById(this.cellId).append(bombImg);
+        this.cellDiv.append(bombImg);
     }
 
     addFlag (){
         this.isFlagged = true;
 
-        document.getElementById(this.cellId).style.background = 'url("assets/flag.jpg")';
-        document.getElementById(this.cellId).style.backgroundSize = '100%';
+        this.cellDiv.classList.add('flagged')
     }
 
     removeFlag (){
         this.isFlagged = false;
 
-        document.getElementById(this.cellId).style.removeProperty('background');
+        this.cellDiv.classList.remove('flagged')
     }
 }
 

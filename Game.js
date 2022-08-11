@@ -3,8 +3,8 @@ import Cell from "./Cell.js";
 class Game {
 
     start(size, bombAmount,parentId){
-        this.cellAmount = parseInt(size);
-        this.bombAmount = parseInt(bombAmount);
+        this.cellAmount = size;
+        this.bombAmount = bombAmount;
         this.remainingFlags = bombAmount;
         this.gridId = parentId;
         this.isFirstClick = true
@@ -17,12 +17,12 @@ class Game {
         let gameArray = [];
         const bombArray = Array(this.bombAmount).fill(1);
         const emptyArray = Array(this.cellAmount * this.cellAmount - this.bombAmount).fill(0);
-        const shuffledArray = emptyArray.concat(bombArray).sort(()=> Math.random() - 0.5);
+        const shuffledArray = [...emptyArray, ...bombArray].sort(()=> Math.random() - 0.5);
 
-        for (let i = 0; i < this.cellAmount * this.cellAmount; i += this.cellAmount) {
-            const test = shuffledArray.slice(i, i + this.cellAmount);
+        for (let i = 0; i < this.cellAmount; i++) {
+            const row = shuffledArray.slice(i * this.cellAmount, (i + 1) * this.cellAmount)
 
-            gameArray.push(test);
+            gameArray.push(row)
         }
         this.gameArray = gameArray;
     }
@@ -108,54 +108,53 @@ class Game {
             this.timerInterval = setInterval(()=> this.updateTimer(startDate), 1000);
         }
 
-        this.isFirstClick = false
+        this.isFirstClick = false;
 
         if(el === null) return;
 
         const targetCell = this.findCell(el.id);
 
-        if (targetCell !== undefined){
+       if (!targetCell) {
+           return;
+       }
 
-            if (targetCell.isBomb) {
+       if (targetCell.isBomb){
+           return this.gameOver();
+       }
 
-                this.gameOver();
-            }else {
-
-                this.controlCells(targetCell);
-                this.checkForWin();
-            }
-        }
+       this.controlCell(targetCell);
+       this.checkForWin();
 
     }
 
     handleFlag (e){
         e.preventDefault();
+
         const targetCell = this.findCell(e.target.id);
 
-        if (targetCell !== undefined){
-
-            if (targetCell.isChecked) return;
-
-            if (this.remainingFlags === 0) {
-
-                if (targetCell.isFlagged) {
-
-                    targetCell.removeFlag();
-                    this.remainingFlags += 1;
-                }
-            }else {
-
-                if (targetCell.isFlagged) {
-
-                    targetCell.removeFlag();
-                    this.remainingFlags += 1;
-                }else {
-
-                    targetCell.addFlag();
-                    this.remainingFlags -= 1;
-                }
-            }
+        if (!targetCell || targetCell.isChecked) {
+            return;
         }
+
+        if (this.remainingFlags === 0 && !targetCell.isFlagged){
+            return;
+        }
+
+        if (this.remainingFlags === 0 && targetCell.isFlagged){
+            targetCell.removeFlag();
+            this.remainingFlags += 1;
+            this.updateFlagsTitle();
+            return;
+        }
+
+        if (targetCell.isFlagged){
+            targetCell.removeFlag();
+            this.remainingFlags += 1;
+        }else {
+            targetCell.addFlag();
+            this.remainingFlags -= 1;
+        }
+
         this.updateFlagsTitle();
     }
 
@@ -163,7 +162,7 @@ class Game {
         document.getElementById('flagsContainer').innerText = `Flags: ${this.remainingFlags}`;
     }
 
-    controlCells(cell){
+    controlCell(cell){
         if (cell.isChecked) return;
         if (cell.isFlagged) return;
 
@@ -187,10 +186,10 @@ class Game {
 
         if(counter !== 0){
 
-            cell.activeCell(counter);
+            cell.check(counter);
         }else {
 
-            cell.activeCell(0);
+            cell.check(0);
 
             for (let i = targetLineId-1 ; i <= targetLineId+1; i++ ){
 
@@ -199,7 +198,7 @@ class Game {
                     const targetCell = this.findCell(`${i}_${j}`);
                     if (targetCell !== undefined){
 
-                        this.controlCells(targetCell);
+                        this.controlCell(targetCell);
                     }
                 }
             }
