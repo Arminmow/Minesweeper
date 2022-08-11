@@ -1,13 +1,15 @@
 # Mine Sweeper
 
-## Run it on localhost:
+## How to run it:
 
 1> Have Node.js installed in your system.
 
-2> In CMD, run the command ``` npm install  http-server -g ```
+2> Navigate to the specific path of the app folder in Terminal 
 
-3> Navigate to the specific path of the file folder in CMD and run the command ``` http-server ```
+3> Run the command ``` npm install ``` to install the dependencies
 
-4> Go to your browser and type **localhost:8080.** Your Application should run there.
+4> Run the command ``` npm start ``` to start the app
+
+5> Go to your browser and type **localhost:8080.** , The Application should run there.
 
 Thanks:)
