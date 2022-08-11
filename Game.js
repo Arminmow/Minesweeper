@@ -6,8 +6,9 @@ class Game {
         this.cellAmount = size;
         this.bombAmount = bombAmount;
         this.remainingFlags = bombAmount;
+        this.gridDiv = document.getElementById(parentId);
         this.gridId = parentId;
-        this.isFirstClick = true
+        this.isFirstClick = true;
         this.createGameArray();
         this.createGrid();
         this.createScoreContainer();
@@ -20,15 +21,14 @@ class Game {
         const shuffledArray = [...emptyArray, ...bombArray].sort(()=> Math.random() - 0.5);
 
         for (let i = 0; i < this.cellAmount; i++) {
-            const row = shuffledArray.slice(i * this.cellAmount, (i + 1) * this.cellAmount)
+            const row = shuffledArray.slice(i * this.cellAmount, (i + 1) * this.cellAmount);
 
-            gameArray.push(row)
+            gameArray.push(row);
         }
         this.gameArray = gameArray;
     }
 
     prepareGrid (){
-        const grid = document.getElementById(this.gridId);
         const width = this.cellAmount >= 15 ? 800 : 600;
         const height = this.cellAmount >= 15 ? 800 : 600;
 
@@ -37,12 +37,12 @@ class Game {
             height: height
         }
 
-        grid.style.width = `${width}px`;
-        grid.style.height = `${height}px`;
+        this.gridDiv.style.width = `${width}px`;
+        this.gridDiv.style.height = `${height}px`;
         this.clickListener = (e)=> this.handleClick(e.target);
         this.flagHandler = (e)=> this.handleFlag(e);
-        grid.addEventListener('click',this.clickListener);
-        grid.addEventListener('contextmenu', this.flagHandler);
+        this.gridDiv.addEventListener('click',this.clickListener);
+        this.gridDiv.addEventListener('contextmenu', this.flagHandler);
    }
 
     createGrid (){
@@ -57,7 +57,7 @@ class Game {
             line.forEach((cell,cellIndex)=>{
                 const cellInstance = new Cell(cell === 1 , `${lineIndex}_${cellIndex}`, cellWidth , cellHeight , this.gridId );
 
-                document.getElementById(this.gridId).style.display = 'flex';
+                this.gridDiv.classList.add('show');
                 cellsArray.push(cellInstance);
             })
         })
@@ -66,8 +66,8 @@ class Game {
 
     createScoreContainer (){
         const scoreboard = document.createElement('div');
-        const scoreboardWidth = parseInt(document.getElementById(this.gridId).style.width) / 3;
-        const scoreboardHeight = parseInt(document.getElementById(this.gridId).style.height);
+        const scoreboardWidth = parseInt(this.gridDiv.style.width) / 3;
+        const scoreboardHeight = parseInt(this.gridDiv.style.height);
         const flagsContainer = document.createElement('h3');
         const timerContainer = document.createElement('h3')
 
@@ -75,8 +75,6 @@ class Game {
         scoreboard.id = 'scoreboard';
         scoreboard.style.width = `${scoreboardWidth}px`;
         scoreboard.style.height = `${scoreboardHeight}px`;
-        scoreboard.style.marginLeft = `20px`;
-        scoreboard.style.padding = `10px`;
 
         flagsContainer.id = 'flagsContainer';
         flagsContainer.innerText = `Flags: ${this.remainingFlags}`;
@@ -87,8 +85,7 @@ class Game {
         timerContainer.className = 'scoreEl'
 
         scoreboard.append(flagsContainer);
-        scoreboard.append(timerContainer)
-
+        scoreboard.append(timerContainer);
         document.getElementById('main').append(scoreboard);
     }
 
@@ -103,20 +100,16 @@ class Game {
     }
 
     handleClick (el){
+        const targetCell = this.findCell(el.id);
+
+        if(!targetCell) return;
+
         if (this.isFirstClick) {
-            const startDate = Date.now()
+            const startDate = Date.now();
             this.timerInterval = setInterval(()=> this.updateTimer(startDate), 1000);
         }
 
         this.isFirstClick = false;
-
-        if(el === null) return;
-
-        const targetCell = this.findCell(el.id);
-
-       if (!targetCell) {
-           return;
-       }
 
        if (targetCell.isBomb){
            return this.gameOver();
@@ -124,7 +117,6 @@ class Game {
 
        this.controlCell(targetCell);
        this.checkForWin();
-
     }
 
     handleFlag (e){
@@ -210,8 +202,8 @@ class Game {
         this.cellsArray.forEach((cell)=>{
             if (cell.isBomb) cell.highlightBomb();
         })
-        document.getElementById(this.gridId).removeEventListener('click', this.clickListener);
-        document.getElementById(this.gridId).removeEventListener('contextmenu', this.flagHandler);
+        this.gridDiv.removeEventListener('click', this.clickListener);
+        this.gridDiv.removeEventListener('contextmenu', this.flagHandler);
         clearInterval(this.timerInterval);
         alert('GameOver');
     }
