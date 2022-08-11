@@ -1,6 +1,9 @@
+import HtmlGame from "./HtmlGame.js";
+
+const HtmlHandler = new HtmlGame()
 
 class Cell {
-    constructor(bomb,id,width,height,parentId) {
+    constructor(bomb, id, width, height, parentId) {
         this.isBomb = bomb;
         this.cellId = id;
         this.width = width;
@@ -11,49 +14,36 @@ class Cell {
         this.addToParent();
     }
 
-    addToParent (){
-        const cellDiv = document.createElement('div');
+    addToParent() {
+        HtmlHandler.createWidget('div', '', this.parentId, this.cellId, ['cellDiv', 'valid'], '', this.width, this.height);
 
-        cellDiv.setAttribute('id',this.cellId);
-        cellDiv.className = 'cellDiv'
-        cellDiv.style.width = `${this.width}px`;
-        cellDiv.style.height = `${this.height}px`;
-        cellDiv.classList.add('valid');
-
-        document.getElementById(this.parentId).appendChild(cellDiv);
         this.cellDiv = document.getElementById(this.cellId);
     }
 
-    check (neighborBombsCount){
-        console.log(this.cellDiv)
-        this.cellDiv.classList.add('checked');
-        this.cellDiv.innerText = neighborBombsCount === 0 ? '' : neighborBombsCount;
+    check(neighborBombsCount) {
+        HtmlHandler.addClass(this.cellDiv, 'checked');
+        HtmlHandler.updateInnerText(this.cellDiv, neighborBombsCount === 0 ? '' : neighborBombsCount);
         this.isChecked = true;
-
     }
 
-    highlightBomb (){
+    highlightBomb() {
         if (this.isFlagged) {
             this.removeFlag();
         }
-        const bombImg = document.createElement('img');
 
-        bombImg.src = 'assets/bomb-noBg.png';
-        bombImg.className = 'bombImg'
-
-        this.cellDiv.append(bombImg);
+        HtmlHandler.createWidget('img',{src: 'assets/bomb-noBg.png'}, this.cellId, '', ['bombImg'], '');
     }
 
-    addFlag (){
+    addFlag() {
         this.isFlagged = true;
 
-        this.cellDiv.classList.add('flagged')
+        HtmlHandler.addClass(this.cellDiv , 'flagged');
     }
 
-    removeFlag (){
+    removeFlag() {
         this.isFlagged = false;
 
-        this.cellDiv.classList.remove('flagged')
+        HtmlHandler.removeClass(this.cellDiv, 'flagged');
     }
 }
 

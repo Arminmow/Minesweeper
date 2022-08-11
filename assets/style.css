@@ -133,10 +133,6 @@ body {
     height: 100%;
 }
 
-.cellDiv {
-
-}
-
 .cellDiv.flagged {
     background: url("flag.jpg");
     background-size: 100%;

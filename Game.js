@@ -1,8 +1,11 @@
 import Cell from "./Cell.js";
+import HtmlGame from "./HtmlGame.js";
+
+const HtmlHandler = new HtmlGame()
 
 class Game {
 
-    start(size, bombAmount,parentId){
+    start(size, bombAmount, parentId) {
         this.cellAmount = size;
         this.bombAmount = bombAmount;
         this.remainingFlags = bombAmount;
@@ -14,11 +17,11 @@ class Game {
         this.createScoreContainer();
     }
 
-    createGameArray (){
+    createGameArray() {
         let gameArray = [];
         const bombArray = Array(this.bombAmount).fill(1);
         const emptyArray = Array(this.cellAmount * this.cellAmount - this.bombAmount).fill(0);
-        const shuffledArray = [...emptyArray, ...bombArray].sort(()=> Math.random() - 0.5);
+        const shuffledArray = [...emptyArray, ...bombArray].sort(() => Math.random() - 0.5);
 
         for (let i = 0; i < this.cellAmount; i++) {
             const row = shuffledArray.slice(i * this.cellAmount, (i + 1) * this.cellAmount);
@@ -28,7 +31,7 @@ class Game {
         this.gameArray = gameArray;
     }
 
-    prepareGrid (){
+    prepareGrid() {
         const width = this.cellAmount >= 15 ? 800 : 600;
         const height = this.cellAmount >= 15 ? 800 : 600;
 
@@ -39,13 +42,13 @@ class Game {
 
         this.gridDiv.style.width = `${width}px`;
         this.gridDiv.style.height = `${height}px`;
-        this.clickListener = (e)=> this.handleClick(e.target);
-        this.flagHandler = (e)=> this.handleFlag(e);
-        this.gridDiv.addEventListener('click',this.clickListener);
+        this.clickListener = (e) => this.handleClick(e.target);
+        this.flagHandler = (e) => this.handleFlag(e);
+        this.gridDiv.addEventListener('click', this.clickListener);
         this.gridDiv.addEventListener('contextmenu', this.flagHandler);
-   }
+    }
 
-    createGrid (){
+    createGrid() {
         this.prepareGrid();
 
         let cellsArray = [];
@@ -53,9 +56,9 @@ class Game {
         const cellWidth = this.size.width / this.cellAmount;
         const cellHeight = this.size.height / this.cellAmount;
 
-        this.gameArray.forEach((line,lineIndex)=>{
-            line.forEach((cell,cellIndex)=>{
-                const cellInstance = new Cell(cell === 1 , `${lineIndex}_${cellIndex}`, cellWidth , cellHeight , this.gridId );
+        this.gameArray.forEach((line, lineIndex) => {
+            line.forEach((cell, cellIndex) => {
+                const cellInstance = new Cell(cell === 1, `${lineIndex}_${cellIndex}`, cellWidth, cellHeight, this.gridId);
 
                 this.gridDiv.classList.add('show');
                 cellsArray.push(cellInstance);
@@ -64,62 +67,43 @@ class Game {
         this.cellsArray = cellsArray;
     }
 
-    createScoreContainer (){
-        const scoreboard = document.createElement('div');
-        const scoreboardWidth = parseInt(this.gridDiv.style.width) / 3;
-        const scoreboardHeight = parseInt(this.gridDiv.style.height);
-        const flagsContainer = document.createElement('h3');
-        const timerContainer = document.createElement('h3')
-
-
-        scoreboard.id = 'scoreboard';
-        scoreboard.style.width = `${scoreboardWidth}px`;
-        scoreboard.style.height = `${scoreboardHeight}px`;
-
-        flagsContainer.id = 'flagsContainer';
-        flagsContainer.innerText = `Flags: ${this.remainingFlags}`;
-        flagsContainer.className = `scoreEl`
-
-        timerContainer.id = `timerContainer`
-        timerContainer.innerText = `Time:`
-        timerContainer.className = 'scoreEl'
-
-        scoreboard.append(flagsContainer);
-        scoreboard.append(timerContainer);
-        document.getElementById('main').append(scoreboard);
+    createScoreContainer() {
+        HtmlHandler.createWidget('div', '', 'main', 'scoreboard', ['scoreboard'], '', parseInt(this.gridDiv.style.width) / 3, parseInt(this.gridDiv.style.height))
+        HtmlHandler.createWidget('div', '', 'scoreboard', 'flagsContainer', ['scoreEl'], `Flags: ${this.remainingFlags}`);
+        HtmlHandler.createWidget('div', '', 'scoreboard', 'timerContainer', ['scoreEl'], `Time:`);
     }
 
-    findCell (targetId){
-        for (let i=0; i < this.cellsArray.length; i++){
+    findCell(targetId) {
+        for (let i = 0; i < this.cellsArray.length; i++) {
             const cellInstance = this.cellsArray[i];
 
-            if (cellInstance.cellId === targetId){
+            if (cellInstance.cellId === targetId) {
                 return cellInstance;
             }
         }
     }
 
-    handleClick (el){
+    handleClick(el) {
         const targetCell = this.findCell(el.id);
 
-        if(!targetCell) return;
+        if (!targetCell) return;
 
         if (this.isFirstClick) {
             const startDate = Date.now();
-            this.timerInterval = setInterval(()=> this.updateTimer(startDate), 1000);
+            this.timerInterval = setInterval(() => this.updateTimer(startDate), 1000);
         }
 
         this.isFirstClick = false;
 
-       if (targetCell.isBomb){
-           return this.gameOver();
-       }
+        if (targetCell.isBomb) {
+            return this.gameOver();
+        }
 
-       this.controlCell(targetCell);
-       this.checkForWin();
+        this.controlCell(targetCell);
+        this.checkForWin();
     }
 
-    handleFlag (e){
+    handleFlag(e) {
         e.preventDefault();
 
         const targetCell = this.findCell(e.target.id);
@@ -128,21 +112,21 @@ class Game {
             return;
         }
 
-        if (this.remainingFlags === 0 && !targetCell.isFlagged){
+        if (this.remainingFlags === 0 && !targetCell.isFlagged) {
             return;
         }
 
-        if (this.remainingFlags === 0 && targetCell.isFlagged){
+        if (this.remainingFlags === 0 && targetCell.isFlagged) {
             targetCell.removeFlag();
             this.remainingFlags += 1;
             this.updateFlagsTitle();
             return;
         }
 
-        if (targetCell.isFlagged){
+        if (targetCell.isFlagged) {
             targetCell.removeFlag();
             this.remainingFlags += 1;
-        }else {
+        } else {
             targetCell.addFlag();
             this.remainingFlags -= 1;
         }
@@ -150,11 +134,12 @@ class Game {
         this.updateFlagsTitle();
     }
 
-    updateFlagsTitle (){
-        document.getElementById('flagsContainer').innerText = `Flags: ${this.remainingFlags}`;
+    updateFlagsTitle() {
+        HtmlHandler.updateInnerText(document.getElementById('flagsContainer'), `Flags: ${this.remainingFlags}`);
     }
 
-    controlCell(cell){
+
+    controlCell(cell) {
         if (cell.isChecked) return;
         if (cell.isFlagged) return;
 
@@ -163,32 +148,32 @@ class Game {
         const targetRowId = parseInt(idSplit[1]);
         let counter = 0;
 
-        for (let i = targetLineId-1 ; i <= targetLineId+1; i++ ){
+        for (let i = targetLineId - 1; i <= targetLineId + 1; i++) {
 
-            for (let j = targetRowId-1 ; j <= targetRowId+1; j++ ){
+            for (let j = targetRowId - 1; j <= targetRowId + 1; j++) {
 
                 const targetCell = this.findCell(`${i}_${j}`);
 
-                if (targetCell !== undefined){
+                if (targetCell !== undefined) {
 
-                    if (targetCell.isBomb) counter ++;
+                    if (targetCell.isBomb) counter++;
                 }
             }
         }
 
-        if(counter !== 0){
+        if (counter !== 0) {
 
             cell.check(counter);
-        }else {
+        } else {
 
             cell.check(0);
 
-            for (let i = targetLineId-1 ; i <= targetLineId+1; i++ ){
+            for (let i = targetLineId - 1; i <= targetLineId + 1; i++) {
 
-                for (let j = targetRowId-1 ; j <= targetRowId+1; j++ ){
+                for (let j = targetRowId - 1; j <= targetRowId + 1; j++) {
 
                     const targetCell = this.findCell(`${i}_${j}`);
-                    if (targetCell !== undefined){
+                    if (targetCell !== undefined) {
 
                         this.controlCell(targetCell);
                     }
@@ -198,8 +183,8 @@ class Game {
 
     }
 
-    gameOver (){
-        this.cellsArray.forEach((cell)=>{
+    gameOver() {
+        this.cellsArray.forEach((cell) => {
             if (cell.isBomb) cell.highlightBomb();
         })
         this.gridDiv.removeEventListener('click', this.clickListener);
@@ -208,25 +193,25 @@ class Game {
         alert('GameOver');
     }
 
-    updateTimer (startDate) {
+    updateTimer(startDate) {
         const delta = Date.now() - startDate;
         const deltaSec = Math.floor(delta / 1000);
 
-        document.getElementById('timerContainer').innerText = `Time: ${deltaSec}`;
+        HtmlHandler.updateInnerText(document.getElementById('timerContainer'), `Time: ${deltaSec}`);
     }
 
-    checkForWin (){
+    checkForWin() {
         let checked = 0;
-        this.cellsArray.forEach((cell)=>{
-            if (cell.isChecked) checked ++;
+        this.cellsArray.forEach((cell) => {
+            if (cell.isChecked) checked++;
         })
-        if (checked + this.bombAmount === this.cellAmount * this.cellAmount){
+        if (checked + this.bombAmount === this.cellAmount * this.cellAmount) {
             this.gameWin();
         }
     }
 
-    gameWin (){
-        this.cellsArray.forEach((cell)=>{
+    gameWin() {
+        this.cellsArray.forEach((cell) => {
             if (cell.isBomb) cell.addFlag()
         })
         clearInterval(this.timerInterval);
