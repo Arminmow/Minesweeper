@@ -1,5 +1,8 @@
 # Mine Sweeper
 
+## Live demo: 
+https://minesweeper-fct5.onrender.com
+
 ## How to run it:
 
 1> Have Node.js installed in your system.
